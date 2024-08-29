@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { useCity } from "./CityProvider";
+import axios from "axios";
 
 function Time() {
     const [currentTime, setCurrentTime] = useState(new Date());
+    const { selectedCity } = useCity();
+    const [timezone, setTimezone] = useState("");
+    const [weather, setWeather] = useState([]);
+    const [weatherIcon, setWeatherIcon] = useState("");
+
+
 
     const MORNING = 'Good Morning';
     const AFTERNOON = 'Good Afternoon';
@@ -11,13 +19,35 @@ function Time() {
     const NIGHT = 'Good Night';
 
     useEffect(() => {
+        if (selectedCity) {
+            const fetchTimezone = async () => {
+                try {
+                    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&appid=cc0cedf14be5a6750f3792b71a3aa9e6&units=metric`);
+                    const { timezone } = response.data;
+                    const { temp } = response.data.main;
+                    const { icon } = response.data.weather[0];
+                    console.log(response.data)
+                    setTimezone(timezone);
+                    setWeather(temp);
+                    setWeatherIcon(icon);
+                } catch (error) {
+                    console.error("Error fetching timezone:", error);
+                }
+            };
+
+            fetchTimezone();
+        }
+    }, [selectedCity]);
+
+    useEffect(() => {
         const intervalId = setInterval(() => {
-            setCurrentTime(new Date());
+            const utcTime = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000); 
+            const adjustedTime = new Date(utcTime.getTime() + timezone * 1000);
+            setCurrentTime(adjustedTime);
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, []);
-
+    }, [timezone]);
 
     const date = currentTime.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
     const time = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
@@ -63,9 +93,23 @@ function Time() {
                     <span className="font-monospace font-4xl font-extralight text-orange-950 dark:text-orange-100">{seconds}</span>
                 </div>
             </div>
-            <div className="mb-2">
+            <div className="mb-1">
                 <p className="text-xl text-center font-sans font-extralight text-gray-600 dark:text-gray-200 mt-1">
                     {date}
+                </p>
+            </div>
+            <div className="text-center">
+                <p className="font-sans text-sm dark:text-gray-300">
+                    {selectedCity}
+                    <span>
+                        <img
+                            src={`http://openweathermap.org/img/wn/${weatherIcon}.png`}
+                            alt="Weather icon"
+                            className="inline-block mx-1 weather-icon w-8 h-8"
+                            style={{ filter: "drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))" }}
+                        />
+                    </span>
+                    {weather}°C
                 </p>
             </div>
         </div>

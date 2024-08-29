@@ -18,9 +18,11 @@ function CityModal({ isOpen, onClose }) {
         }
     }, [isOpen])
 
+    const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY;
+
     const fetchCity = async (cityName) => {
         try {
-          const response = await axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=cc0cedf14be5a6750f3792b71a3aa9e6
+          const response = await axios.get(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${apiKey}
 `);
           console.log(response.data)
           setCitySuggestions(response.data);
@@ -79,7 +81,7 @@ function CityModal({ isOpen, onClose }) {
                                 onClick={() => handleSave(suggestion)}
                             >
                                 <div className="text-sm font-sans">{suggestion.name}</div>
-                                <div className="text-xs text-gray-500 font-sans font-thin">{suggestion.country}</div>
+                                <div className="text-xs text-gray-500 font-sans font-thin dark:text-black">{suggestion.country}</div>
                             </li>
                         ))}
                     </ul>
