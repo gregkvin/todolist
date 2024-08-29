@@ -1,7 +1,9 @@
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDarkMode } from "./DarkModeProvider";
+
+
 
 function DarkMode(){
     const { isDarkMode, setIsDarkMode } = useDarkMode();
@@ -12,7 +14,7 @@ function DarkMode(){
 
     return (
         <div className="relative max-w-md mb-4">
-        <div className="form-check form-switch mb-3 flex items-center absolute top-0 right-0">
+        <div className="form-check form-switch mb-3 flex items-center absolute top-6 right-0">
         <input
           className="form-check-input hidden"
           type="checkbox"

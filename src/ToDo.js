@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { faEdit, faSave, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useToDo } from "./ToDoProvider";
+import { useCity } from "./CityProvider";
 
 function ToDo() {
   const tasksPerPage = 5;
@@ -11,6 +12,7 @@ function ToDo() {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
+  const { selectedCity } = useCity();
 
   useEffect(() => {
     const currPage = localStorage.getItem("pagination");
@@ -105,6 +107,10 @@ function ToDo() {
 
   return (
     <div className="max-w-md">
+      <div className="text-center">
+        <p className="font-sans text-sm dark:text-gray-300">{selectedCity}</p>
+      </div>
+      
       <div className="flex items-center mb-4 mt-2">
         <input
             type="text"
