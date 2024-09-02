@@ -5,7 +5,7 @@ import { DarkModeProvider } from "./DarkModeProvider";
 import { ToDoProvider } from "./ToDoProvider";
 import Settings from "./Settings";
 import { useState } from "react";
-import CityModal from "./CityModal";
+import SettingsModal from "./SettingsModal";
 import { CityProvider } from "./CityProvider";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
       <DarkMode />
       <Time />
       <ToDo />
-      <CityModal isOpen={settingsModalOpen} onClose={closeSettings} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={closeSettings} />
       </div>
     </div>
     </ToDoProvider>

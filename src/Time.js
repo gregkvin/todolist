@@ -10,8 +10,8 @@ function Time() {
     const [timezone, setTimezone] = useState("");
     const [weather, setWeather] = useState([]);
     const [weatherIcon, setWeatherIcon] = useState("");
-
-
+    const [apiKeyValid, setApiKeyValid] = useState(true);
+    const [error, setError] = useState("");
 
     const MORNING = 'Good Morning';
     const AFTERNOON = 'Good Afternoon';
@@ -22,7 +22,14 @@ function Time() {
         if (selectedCity) {
             const fetchTimezone = async () => {
                 try {
-                    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&appid=cc0cedf14be5a6750f3792b71a3aa9e6&units=metric`);
+                    const apiKey = localStorage.getItem("apiKey");
+                    if (!apiKey) {
+                        setError("API key is missing. Please set up your API key.");
+                        setApiKeyValid(false);
+                        return;
+                    }
+
+                    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&appid=${apiKey}&units=metric`);
                     const { timezone } = response.data;
                     const { temp } = response.data.main;
                     const { icon } = response.data.weather[0];
@@ -30,8 +37,13 @@ function Time() {
                     setTimezone(timezone);
                     setWeather(temp);
                     setWeatherIcon(icon);
+                    setError("");
+                    setApiKeyValid(true);
                 } catch (error) {
                     console.error("Error fetching timezone:", error);
+                    setApiKeyValid(false);
+                    setTimezone(null);
+                    setError("Invalid API key or error fetching data.");
                 }
             };
 
@@ -42,7 +54,7 @@ function Time() {
     useEffect(() => {
         const intervalId = setInterval(() => {
             const utcTime = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000); 
-            const adjustedTime = new Date(utcTime.getTime() + timezone * 1000);
+            const adjustedTime = timezone ? new Date(utcTime.getTime() + timezone * 1000) : new Date();
             setCurrentTime(adjustedTime);
         }, 1000);
 
@@ -98,6 +110,11 @@ function Time() {
                     {date}
                 </p>
             </div>
+            {error ? (
+                <div className="text-center text-red-600 dark:text-red-300 font-sans text-xs">
+                    {error}
+                </div>
+            ) : (
             <div className="text-center">
                 <p className="font-sans text-sm dark:text-gray-300">
                     {selectedCity}
@@ -112,6 +129,7 @@ function Time() {
                     {weather}°C
                 </p>
             </div>
+            )}
         </div>
     );
 }
