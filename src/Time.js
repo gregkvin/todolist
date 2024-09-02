@@ -8,7 +8,7 @@ function Time() {
     const [currentTime, setCurrentTime] = useState(new Date());
     const { selectedCity } = useCity();
     const [timezone, setTimezone] = useState("");
-    const [weather, setWeather] = useState([]);
+    const [weather, setWeather] = useState(null);
     const [weatherIcon, setWeatherIcon] = useState("");
     const [apiKeyValid, setApiKeyValid] = useState(true);
     const [error, setError] = useState("");
@@ -118,15 +118,15 @@ function Time() {
             <div className="text-center">
                 <p className="font-sans text-sm dark:text-gray-300">
                     {selectedCity}
-                    <span>
-                        <img
-                            src={`http://openweathermap.org/img/wn/${weatherIcon}.png`}
-                            alt="Weather icon"
-                            className="inline-block mx-1 weather-icon w-8 h-8"
-                            style={{ filter: "drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))" }}
-                        />
-                    </span>
-                    {weather}°C
+                    {weatherIcon && (
+                    <img
+                        src={`http://openweathermap.org/img/wn/${weatherIcon}.png`}
+                        alt="Weather icon"
+                        className="inline-block mx-1 weather-icon w-8 h-8"
+                        style={{ filter: "drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))" }}
+                    />
+                )}
+                {weather !== null ? `${weather}°C` : ""}
                 </p>
             </div>
             )}
